@@ -15,7 +15,7 @@ const ItemDetailContainer = () => {
   return (
     <div className="d-flex justify-content-center align-items-center p-5">
       <Card
-        style={{ width: "18rem", maxHeight: "30rem", minHeight: "30rem" }}
+        style={{ width: "18rem", maxHeight: "33rem", minHeight: "30rem" }}
         bg="dark"
         border="light"
       >
