@@ -1,11 +1,23 @@
 import React from "react";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { UilShoppingCart } from "@iconscout/react-unicons";
+import { Link } from "react-router-dom";
 
 const Cartwidget = () => {
   return (
     <div style={{ position: "relative", padding: 10 }}>
-      <span style={{ position: "absolute", top: "0px", left: "0px" }}>1</span>
-      <ShoppingCartIcon />
+      <Link to="/cart">
+        <span
+          style={{
+            position: "absolute",
+            top: "0px",
+            left: "0px",
+            color: "white",
+          }}
+        >
+          1
+        </span>
+        <UilShoppingCart color="#EFEFEF" size="40" />
+      </Link>
     </div>
   );
 };
