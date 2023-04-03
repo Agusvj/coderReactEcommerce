@@ -2,9 +2,29 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import NavbarBootstrap from "react-bootstrap/Navbar";
 import Cartwidget from "../Cartwidget/Cartwidget";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
 const Navbar = ({ children }) => {
+  const [categoryList, setCategoryList] = useState([]);
+
+  useEffect(() => {
+    const itemsCollection = collection(db, "categories");
+    getDocs(itemsCollection).then((res) => {
+      let arrayCategories = res.docs.map((category) => {
+        return {
+          ...category.data(),
+          id: category.id,
+        };
+      });
+      setCategoryList(arrayCategories);
+    });
+  }, []);
+
+  const location = useLocation();
+
   return (
     <div>
       <NavbarBootstrap
@@ -20,7 +40,7 @@ const Navbar = ({ children }) => {
                 src="/logoconqueror.png"
                 width="120"
                 className="d-inline-block align-top"
-                alt="React Bootstrap logo"
+                alt="padel conqueror logo"
               />
             </Link>
           </NavbarBootstrap.Brand>
@@ -30,20 +50,28 @@ const Navbar = ({ children }) => {
           />
           <NavbarBootstrap.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto me-5">
-              <Link to="/category/paletas" style={{ textDecoration: "none" }}>
-                <p className="text-light m-0 pe-5">Paletas</p>
-              </Link>
-
-              <Link
-                to="/category/zapatillas"
-                style={{ textDecoration: "none" }}
-              >
-                <p className="text-light m-0 pe-5">Zapatillas</p>
-              </Link>
-
-              <Link to="/category/remeras" style={{ textDecoration: "none" }}>
-                <p className="text-light m-0 pe-5">Remeras</p>
-              </Link>
+              {categoryList.map((category) => {
+                return (
+                  <Link
+                    key={category.id}
+                    to={category.path}
+                    style={
+                      location.pathname === category.path
+                        ? {
+                            color: "white",
+                            textDecoration: "underline",
+                            fontWeight: "bold",
+                          }
+                        : {
+                            color: "white",
+                            textDecoration: "none",
+                          }
+                    }
+                  >
+                    <p className="text-light m-0 pe-5">{category.title}</p>
+                  </Link>
+                );
+              })}
             </Nav>
           </NavbarBootstrap.Collapse>
           <Cartwidget />

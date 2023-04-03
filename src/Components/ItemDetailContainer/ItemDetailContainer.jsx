@@ -1,33 +1,59 @@
-import React from "react";
-import { products } from "../../productsMock";
+import React, { useContext } from "react";
 
 import { useParams } from "react-router-dom";
-import ItemCount from "../ItemCount/ItemCount";
+import { CartContext } from "../../context/CartContext";
 
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
+import Swal from "sweetalert2";
+
+import { getDoc, collection, doc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { db } from "../../firebaseConfig";
+import ItemDetail from "../ItemDetail/ItemDetail";
 
 const ItemDetailContainer = () => {
   const { id } = useParams();
 
-  const productSelected = products.find((element) => element.id === Number(id));
+  const { agregarAlCarrito, getQuantityById } = useContext(CartContext);
+
+  const [productSelected, setProductSelected] = useState({});
+
+  useEffect(() => {
+    const itemCollection = collection(db, "products");
+
+    const ref = doc(itemCollection, id);
+    getDoc(ref).then((res) => {
+      setProductSelected({
+        ...res.data(),
+        id: res.id,
+      });
+    });
+  }, [id]);
+
+  const onAdd = (cantidad) => {
+    let producto = {
+      ...productSelected,
+      quantity: cantidad,
+    };
+
+    agregarAlCarrito(producto);
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: "Producto agregado al carrito",
+      showConfirmButton: false,
+      timer: 1000,
+    });
+  };
+
+  let quantity = getQuantityById(Number(id));
 
   return (
-    <div className="d-flex justify-content-center align-items-center p-5">
-      <Card
-        style={{ width: "18rem", maxHeight: "33rem", minHeight: "30rem" }}
-        bg="dark"
-        border="light"
-      >
-        <Card.Img variant="top" src={productSelected.img} />
-        <Card.Body className="d-flex flex-column justify-content-center">
-          <Card.Title className="border-bottom border-warning pb-2 fw-bold">
-            {productSelected.title}
-          </Card.Title>
-          <Card.Text>{productSelected.description}</Card.Text>
-          <ItemCount stock={productSelected.stock} />
-        </Card.Body>
-      </Card>
+    <div>
+      <ItemDetail
+        productSelected={productSelected}
+        onAdd={onAdd}
+        quantity={quantity}
+      />
     </div>
   );
 };

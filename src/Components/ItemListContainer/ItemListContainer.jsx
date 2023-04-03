@@ -1,33 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { products } from "../../productsMock";
 import { useParams } from "react-router-dom";
 import ItemList from "../ItemList/ItemList";
+import GridLoader from "react-spinners/GridLoader";
+import { db } from "../../firebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-const ItemListContainer = ({}) => {
+const ItemListContainer = () => {
   const { categoryName } = useParams();
 
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const productList = new Promise((resolve, reject) => {
-      const productos = categoryName
-        ? products.filter((elemento) => elemento.category === categoryName)
-        : products;
-      resolve(productos);
-    });
+    const itemsCollection = collection(db, "products");
 
-    productList
-      .then((res) => {
-        setItems(res);
-      })
-      .catch((error) => {
-        console.log(error);
+    let consulta = undefined;
+
+    if (categoryName) {
+      const q = query(itemsCollection, where("category", "==", categoryName));
+      consulta = getDocs(q);
+    } else {
+      consulta = getDocs(itemsCollection);
+    }
+
+    consulta.then((res) => {
+      let products = res.docs.map((product) => {
+        return {
+          ...product.data(),
+          id: product.id,
+        };
       });
+      setItems(products);
+    });
   }, [categoryName]);
 
   return (
     <div>
-      <ItemList items={items} />
+      {items.length > 0 ? (
+        <ItemList items={items} />
+      ) : (
+        <div className="d-flex align-items-center justify-content-center m-5">
+          <GridLoader
+            color={"orange"}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const Item = ({ element }) => {
   return (
     <div className="col-lg-3 col-md-5 col-12 d-flex justify-content-center align-items-center pb-4">
       <Card
-        style={{ width: "18rem", maxHeight: "33rem", minHeight: "30rem" }}
+        style={{ width: "18rem", maxHeight: "30rem", minHeight: "30rem" }}
         bg="dark"
         border="light"
       >
@@ -16,7 +16,12 @@ const Item = ({ element }) => {
           <Card.Title className="border-bottom border-warning pb-2 fw-bold">
             {element.title}
           </Card.Title>
-          <Card.Text>{element.description}</Card.Text>
+          <Card.Text
+            className="text-break overflow-auto text-secondary"
+            style={{ maxHeight: "30px" }}
+          >
+            {element.description}
+          </Card.Text>
           <Card.Text>${element.price}</Card.Text>
           <Link to={`/itemDetail/${element.id}`}>
             <Button variant="secondary">Ver más</Button>

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { UilShoppingCart } from "@iconscout/react-unicons";
 import { Link } from "react-router-dom";
+import { CartContext } from "../../context/CartContext";
 
 const Cartwidget = () => {
+  const { getTotalQuantity } = useContext(CartContext);
+
+  const total = getTotalQuantity();
+
   return (
     <div style={{ position: "relative", padding: 10 }}>
       <Link to="/cart">
@@ -14,7 +19,7 @@ const Cartwidget = () => {
             color: "white",
           }}
         >
-          1
+          {total}
         </span>
         <UilShoppingCart color="#EFEFEF" size="40" />
       </Link>
