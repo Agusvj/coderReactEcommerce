@@ -17,3 +17,7 @@
 ## **Deploy realizado con Vercel, enlace a la pagina:**
 
 ["Ir a la pagina Conqueror"](https://coder-react-ecommerce-7i48kulzm-agusvj.vercel.app/)
+
+## **GIF** de presentacion.
+
+!["Gif funcionamiento"](https://res.cloudinary.com/dyshyq2vl/image/upload/v1680569867/ProyectoFinal-Villanueva_uvi3e8.gif)
