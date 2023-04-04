@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
@@ -8,8 +8,23 @@ const FormCheckout = ({ cart, getTotalPrice, setOrderId, clearCart }) => {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
+    emailConfirm: "",
     phone: "",
   });
+
+  const [disable, setDisable] = useState(true);
+
+  useEffect(() => {
+    if (
+      userData.name !== "" &&
+      userData.phone !== "" &&
+      userData.email !== "" &&
+      userData.emailConfirm !== "" &&
+      userData.email === userData.emailConfirm
+    ) {
+      setDisable(false);
+    }
+  }, [userData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,6 +59,9 @@ const FormCheckout = ({ cart, getTotalPrice, setOrderId, clearCart }) => {
         onSubmit={handleSubmit}
         className="d-flex flex-column col-lg-4 justify-content-center align-items-center p-5 border"
       >
+        <p className="fs-5 fw-bold text-center mb-5">
+          Rellene los datos de forma correcta, para poder confirmar la compra
+        </p>
         <label htmlFor="nombre" className="text-warning fw-bold">
           Nombre:
         </label>
@@ -66,6 +84,19 @@ const FormCheckout = ({ cart, getTotalPrice, setOrderId, clearCart }) => {
           className="w-100 mb-3 mt-3"
           id="email"
         />
+        <label htmlFor="emailConfirmation" className="text-warning fw-bold">
+          Confirmar Email:
+        </label>
+        <input
+          type="email"
+          placeholder="Confirme la direccion de Email"
+          value={userData.emailConfirm}
+          onChange={(e) =>
+            setUserData({ ...userData, emailConfirm: e.target.value })
+          }
+          className="w-100 mb-3 mt-3"
+          id="emailConfirmation"
+        />
         <label htmlFor="telefono" className="text-warning fw-bold">
           Numero de telefono:
         </label>
@@ -78,7 +109,12 @@ const FormCheckout = ({ cart, getTotalPrice, setOrderId, clearCart }) => {
           id="telefono"
         />
 
-        <Button type="submit" variant="secondary" className="mt-3">
+        <Button
+          type="submit"
+          variant="secondary"
+          className="mt-3"
+          disabled={disable}
+        >
           Comprar
         </Button>
       </form>
